@@ -1,4 +1,3 @@
-import { STATES } from 'mongoose';
 import {
   CART_ADD_ITEM,
   CART_EMPTY,
