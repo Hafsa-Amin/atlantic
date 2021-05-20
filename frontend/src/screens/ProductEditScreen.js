@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import axios from '../../node_modules/axios/index';
 import { detailsProduct, updateProduct } from '../actions/productActions';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
@@ -25,7 +26,7 @@ const ProductEditScreen = (props) => {
   } = productUpdate;
   const dispatch = useDispatch();
   useEffect(() => {
-    if (successUpdate) {      
+    if (successUpdate) {
       props.history.push('/productlist');
     }
     if (!product || product._id !== productId || successUpdate) {
@@ -55,6 +56,32 @@ const ProductEditScreen = (props) => {
         description,
       })
     );
+  };
+
+  const [loadingUpload, setLoadingUpload] = useState(false);
+  const [errorUpload, setErrorUpload] = useState('');
+
+  const userSignin = useSelector((state) => state.userSignin);
+  const { userInfo } = userSignin;
+
+  const uploadFileHandler = async (e) => {
+    const file = e.target.files[0];
+    const bodyFormData = new FormData();
+    bodyFormData.append('image', file);
+    setLoadingUpload(true);
+    try {
+      const { data } = await axios.post('/api/uploads', bodyFormData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      });
+      setImage(data);
+      setLoadingUpload(false);
+    } catch (error) {
+      setErrorUpload(error.message);
+      setLoadingUpload(false);
+    }
   };
   return (
     <div>
@@ -101,6 +128,15 @@ const ProductEditScreen = (props) => {
               ></input>
             </div>
             <div>
+              <label htmlFor="imageFile">Image File</label>
+              <input
+                id="imageFile"
+                type="file"
+                label="Choose Image"
+                onChange={uploadFileHandler}
+              ></input>
+            </div>
+            <div>
               <label htmlFor="category">Category</label>
               <input
                 id="category"
@@ -129,6 +165,10 @@ const ProductEditScreen = (props) => {
                 value={countInStock}
                 onChange={(e) => setCountInStock(e.target.value)}
               ></input>
+              {loadingUpload && <LoadingBox></LoadingBox>}
+              {errorUpload && (
+                <MessageBox variant="danger">{errorUpload}</MessageBox>
+              )}
             </div>
             <div>
               <label htmlFor="description">Description</label>
