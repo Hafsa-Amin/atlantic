@@ -13,6 +13,7 @@ import {
 } from '../constants/productConstants';
 
 const ProductListScreen = (props) => {
+  const sellerMode = props.match.path.indexOf('/seller') >= 0;
   const productList = useSelector((state) => state.productList);
   const { loading, error, products } = productList;
   const productCreate = useSelector((state) => state.productCreate);
@@ -28,6 +29,8 @@ const ProductListScreen = (props) => {
     error: errorDelete,
     success: successDelete,
   } = productDelete;
+  const userSignin = useSelector((state) => state.userSignin);
+  const { userInfo } = userSignin;
   const dispatch = useDispatch();
   useEffect(() => {
     if (successCreate) {
@@ -37,8 +40,8 @@ const ProductListScreen = (props) => {
     if (successDelete) {
       dispatch({ type: PRODUCT_DELETE_RESET });
     }
-    dispatch(listProducts());
-  }, [dispatch, createdProduct, successCreate, successDelete, props.history]);
+    dispatch(listProducts({ seller: sellerMode ? userInfo._id : '' }));
+  }, [dispatch, createdProduct, successCreate, successDelete, props.history, userInfo._id]);
   const createHandler = () => {
     dispatch(createProduct());
   };
@@ -49,23 +52,23 @@ const ProductListScreen = (props) => {
   };
   return (
     <div>
-      <div className='row'>
+      <div className="row">
         <h1>Products</h1>
-        <button type='button' className='primary' onClick={createHandler}>
+        <button type="button" className="primary" onClick={createHandler}>
           Create Product
         </button>
       </div>
       {loadingDelete && <LoadingBox></LoadingBox>}
-      {errorDelete && <MessageBox variant='danger'>{errorDelete}</MessageBox>}
+      {errorDelete && <MessageBox variant="danger">{errorDelete}</MessageBox>}
 
       {loadingCreate && <LoadingBox></LoadingBox>}
-      {errorCreate && <MessageBox variant='danger'>{errorCreate}</MessageBox>}
+      {errorCreate && <MessageBox variant="danger">{errorCreate}</MessageBox>}
       {loading ? (
         <LoadingBox></LoadingBox>
       ) : error ? (
-        <MessageBox variant='danger'>{error}</MessageBox>
+        <MessageBox variant="danger">{error}</MessageBox>
       ) : (
-        <table className='table'>
+        <table className="table">
           <thead>
             <tr>
               <th>ID</th>
@@ -86,8 +89,8 @@ const ProductListScreen = (props) => {
                 <td>{product.brand}</td>
                 <td>
                   <button
-                    type='button'
-                    className='small'
+                    type="button"
+                    className="small"
                     onClick={() =>
                       props.history.push(`/product/${product._id}/edit`)
                     }
@@ -95,8 +98,8 @@ const ProductListScreen = (props) => {
                     Edit
                   </button>
                   <button
-                    type='button'
-                    className='small'
+                    type="button"
+                    className="small"
                     onClick={() => deleteHandler(product)}
                   >
                     Delete
