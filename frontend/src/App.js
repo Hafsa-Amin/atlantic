@@ -23,6 +23,8 @@ import SellerRoute from './components/SellerRoute';
 import SellerScreen from './screens/SellerScreen';
 import SearchBox from './components/SearchBox';
 import SearchScreen from './screens/SearchScreen';
+import { useEffect } from 'react';
+import { listProductCategories } from './actions/productActions';
 
 function App() {
   const cart = useSelector((state) => state.cart);
@@ -35,6 +37,10 @@ function App() {
   const signoutHandler = () => {
     dispatch(signout());
   };
+
+  useEffect(() => {
+    dispatch(listProductCategories());
+  }, [dispatch]);
 
   return (
     <BrowserRouter>
@@ -137,6 +143,16 @@ function App() {
           <Route path="/orderhistory" component={OrderHistoryScreen}></Route>
           <Route
             path="/search/name/:name?"
+            component={SearchScreen}
+            exact
+          ></Route>
+          <Route
+            path="/search/category/:category"
+            component={SearchScreen}
+            exact
+          ></Route>
+          <Route
+            path="/search/category/:category/name/:name"
             component={SearchScreen}
             exact
           ></Route>
