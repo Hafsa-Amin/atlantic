@@ -1,9 +1,9 @@
 import React from 'react';
 
 const Rating = (props) => {
-  const { rating, numReviews } = props;
+  const { rating, numReviews, caption } = props;
   return (
-    <div className='rating'>
+    <div className="rating">
       <span>
         <i
           className={
@@ -16,7 +16,7 @@ const Rating = (props) => {
         ></i>
       </span>
       <span>
-      <i
+        <i
           className={
             rating >= 2
               ? 'fa fa-star'
@@ -27,7 +27,7 @@ const Rating = (props) => {
         ></i>
       </span>
       <span>
-      <i
+        <i
           className={
             rating >= 3
               ? 'fa fa-star'
@@ -38,7 +38,7 @@ const Rating = (props) => {
         ></i>
       </span>
       <span>
-      <i
+        <i
           className={
             rating >= 4
               ? 'fa fa-star'
@@ -49,7 +49,7 @@ const Rating = (props) => {
         ></i>
       </span>
       <span>
-      <i
+        <i
           className={
             rating >= 5
               ? 'fa fa-star'
@@ -59,7 +59,11 @@ const Rating = (props) => {
           }
         ></i>
       </span>
-      <span>{numReviews + ' reviews'}</span>
+      {caption ? (
+        <span>{caption}</span>
+      ) : (
+        <span>{numReviews + ' reviews'}</span>
+      )}
     </div>
   );
 };
